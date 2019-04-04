@@ -52,7 +52,7 @@ function rain() {
             const isRain = y < 2;
 
             // Generate a flooded street in the bottom of the image.
-            const isStreet = y > 200 && y < 205;
+            const isStreet = y > Math.round(CENTER*1.53) && y < Math.round(CENTER*1.57);
 
             // Mask out the silhouette of an umbrella in the middle of the image.
             const isUmbrella = Math.random() > 0.8
@@ -75,33 +75,33 @@ function rain() {
 
 function moveDroplet(src) {
 
+    const nextLevel = levelBufferViewInt8[src] + Math.round(Math.random() * 1.3);
+
     // Generate a 0, 1 or 2.
     const rand = Math.round(Math.random() * 2.0);
 
-    // I've iterated over the rows below for hours.
-    // I have no idea what every single piece does anymore.
-    // ...but it works. I think.
-
-    // In the beginning it looked like this.
-    // http://fabiensanglard.net/doom_fire_psx/
-
     // Wind alternatives...
     // A little bit of wind.
-    // const destination = src - rand + 1;
+    // const horizontalMovement = src - rand + 1;
 
     // No wind.
-    // const destination = src;
+    // const horizontalMovement = src;
 
     // A lot of wind.
-    // const destination = src - rand - 2;
+    // const horizontalMovement = src - rand - 2;
 
     // A little bit of both.
-    const destination = Math.random() > 0.8 ? src - rand + 1 : src;
+    const horizontalMovement = Math.random() > 0.8
+        ? src - rand + 1
+        : src;
 
+    // Every 1 in 5 the rain will move up-wards and create the
+    // street splash effect.
+    const verticalMovement = Math.floor(Math.random() * 4.5) * (Math.random() > 0.2
+        ? 1
+        : -1);
 
-    const nextLevel = levelBufferViewInt8[src] + Math.round(Math.random() * 1.3);
-    const direction = Math.floor(Math.random() * -2.5);
-    levelBufferViewInt8[destination + (SIZE * direction * (Math.random() > 0.2 ? -1 : 1))] = nextLevel - (rand & 1);
+    levelBufferViewInt8[horizontalMovement + (SIZE * verticalMovement)] = nextLevel - (rand & 1);
 
     const nextColor = COLORS[nextLevel] || 11;
 
