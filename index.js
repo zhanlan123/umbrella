@@ -1,4 +1,4 @@
-const SIZE = 256;
+const SIZE = 270;
 const CENTER = SIZE / 2;
 
 // A gray-scale height-map.
