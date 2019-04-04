@@ -7,10 +7,17 @@
         html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
+            text-align: center;
         }
         canvas {
-            width: 100%;
-            height: 100%;
+            width: 512px;
+            height: 512px;
+            max-width: 100%;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
     </style>
 </head>
