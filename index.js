@@ -45,6 +45,9 @@ function isInsideCircle(x1, y1, x2, y2, r) {
 
 function rain() {
 
+    const w = canvas.offsetWidth;
+    canvas.style.height = w;
+
     for (let y = 0; y < SIZE; y += 1) {
         for (let x = 0; x < SIZE; x += 1) {
 
