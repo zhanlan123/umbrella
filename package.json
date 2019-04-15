@@ -1,0 +1,12 @@
+{
+  "name": "bitfire",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/janjarfalk/the-umbrella.git",
+  "author": "janjarfalk <jan@jarfalk.se>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html iframe.html",
+    "build": "parcel build index.html iframe.html"
+  }
+}
