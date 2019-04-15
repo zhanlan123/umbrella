@@ -21,14 +21,11 @@ const COLORS = [
 
 
 // Setup the canvas.
-const canvas = document.createElement('canvas');
+const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 
 canvas.width = SIZE;
 canvas.height = SIZE;
-
-// Append the canvas to the dom.
-document.body.appendChild(canvas);
 
 const imageData = context.getImageData(0, 0, SIZE, SIZE);
 
@@ -113,7 +110,7 @@ function render() {
 
     // Go again!
     // setTimeout(function () {
-        requestAnimationFrame(() => render());
+    requestAnimationFrame(() => render());
     // }, 1000);
 }
 
@@ -123,6 +120,7 @@ render();
 
 var Noise = (function () {
 
+    const track = {};
     const audioContext = new (window.AudioContext || window.webkitAudioContext);
 
     function createNoise(track) {
@@ -141,7 +139,7 @@ var Noise = (function () {
         track.audioSource.buffer = noiseBuffer;
     }
 
-    function stopNoise(track) {
+    function stopNoise() {
         if (track.audioSource) {
             track.audioSource.stop();
         }
@@ -164,9 +162,6 @@ var Noise = (function () {
     }
 
     function playNoise() {
-
-        const track = {}
-
         stopNoise(track);
         buildTrack(track);
         createNoise(track);
@@ -185,10 +180,33 @@ var Noise = (function () {
 
 
 let handleMousemove = (event) => {
-    mouse.x = Math.floor(event.x / window.innerWidth * 100) / 100;
-    mouse.y = Math.floor(event.y / window.innerHeight * 100) / 100;
+    const {target} = event;
+    mouse.x = target.value / 100;
 };
 
-document.addEventListener('mousemove', handleMousemove);
+const handleRainChange = (event) => {
+    const {target} = event;
+    mouse.y = target.value / 100;
+};
 
-canvas.addEventListener('click', () => Noise.play());
+const handleSoundChange = (event) => {
+    const {target} = event;
+    if (target.value === "1") {
+        Noise.play();
+    } else {
+        Noise.stop();
+    }
+};
+
+
+const wind = document.getElementById('wind');
+wind.addEventListener('input', handleMousemove);
+
+const rainRangeElement = document.getElementById('rain');
+rainRangeElement.addEventListener('input', handleRainChange);
+
+
+const soundRangeElement = document.getElementById('sound');
+soundRangeElement.addEventListener('input', handleSoundChange);
+
+// canvas.addEventListener('click', () => Noise.play());
