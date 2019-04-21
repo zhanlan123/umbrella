@@ -6,7 +6,11 @@
   "author": "janjarfalk <jan@jarfalk.se>",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel index.html iframe.html",
-    "build": "parcel build index.html iframe.html"
+    "dev": "parcel *.html --out-dir docs",
+    "build": "parcel build *.html --out-dir docs"
+  },
+  "dependencies": {
+    "iframe-resizer": "^4.1.1",
+    "parcel": "^1.12.3"
   }
 }

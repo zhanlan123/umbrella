@@ -1,0 +1,62 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 540px;
+}
+
+canvas {
+    width: 540px;
+    height: 540px;
+    max-width: 100%;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.studio {
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+.paper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 540px;
+    height: 540px;
+    max-width: 100%;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    margin-bottom: 2em;
+}
+
+fieldset {
+    border: 1px solid #eee;
+    padding: 1.5em;
+    margin: 0;
+}
+
+legend {
+    padding: 0;
+    text-transform: uppercase;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+label {
+    font-family: monospace;
+    text-transform: uppercase;
+    margin-bottom: 2em;
+    display: block;
+}
+
+label input {
+    display: block;
+    width: 100%;
+}

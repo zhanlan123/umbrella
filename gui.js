@@ -1,0 +1,29 @@
+export const controls = [{
+    id: 'wind',
+    type: 'range',
+    min: 0,
+    max: 100,
+    step: 1,
+    value: 50
+}, {
+    id: 'rain',
+    type: 'range',
+    min: 0,
+    max: 100,
+    step: 1,
+    value: 50
+}, {
+    id: 'sound',
+    type: 'range',
+    min: 0,
+    max: 1,
+    step: 1,
+    value: 0
+}, {
+    id: 'color',
+    type: 'range',
+    min: 0,
+    max: 2,
+    step: 1,
+    value: 0
+}];
