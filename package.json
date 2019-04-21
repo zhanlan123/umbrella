@@ -7,10 +7,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "parcel *.html --out-dir docs",
-    "build": "parcel build *.html --out-dir docs"
+    "build": "parcel build *.html --out-dir docs --public-url /umbrella/"
   },
   "dependencies": {
     "iframe-resizer": "^4.1.1",
     "parcel": "^1.12.3"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
   }
 }
