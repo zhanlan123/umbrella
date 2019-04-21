@@ -1,9 +1,10 @@
 html, body {
+    width: 100%;
     margin: 0;
     padding: 0;
-    width: 100%;
-    max-width: 540px;
+    font-size: 18px;
 }
+
 
 canvas {
     width: 540px;
@@ -18,7 +19,6 @@ canvas {
 .studio {
     width: 100%;
     max-width: 540px;
-    margin: 0 auto;
 }
 
 .paper {
@@ -47,6 +47,7 @@ legend {
     text-transform: uppercase;
     font-family: monospace;
     font-weight: bold;
+    font-size: 0.618em;
 }
 
 label {
@@ -54,6 +55,7 @@ label {
     text-transform: uppercase;
     margin-bottom: 2em;
     display: block;
+    font-size: 0.618em;
 }
 
 label input {
