@@ -6,7 +6,7 @@
   "author": "janjarfalk <jan@jarfalk.se>",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel *.html --out-dir docs",
+    "dev": "parcel *.html --out-dir dist",
     "build": "parcel build *.html --out-dir docs --public-url /umbrella/"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
     "parcel": "^1.12.3"
   },
   "devDependencies": {
-    "cssnano": "^4.1.10"
+    "cssnano": "^4.1.10",
+    "parcel-plugin-static-files-copy": "^2.0.0"
   }
 }

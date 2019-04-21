@@ -1,4 +1,11 @@
 export const controls = [{
+    id: 'mask',
+    type: 'range',
+    min: 0,
+    max: 3,
+    step: 1,
+    value: 0
+}, {
     id: 'horizontalMovementOffset',
     type: 'range',
     min: -2,
@@ -12,7 +19,7 @@ export const controls = [{
     max: 10,
     step: 1,
     value: 1
-},{
+}, {
     id: 'verticalMovementOffset',
     type: 'range',
     min: -100,
@@ -26,7 +33,7 @@ export const controls = [{
     max: 100,
     step: 1,
     value: 5
-},{
+}, {
     id: 'sound',
     type: 'range',
     min: 0,

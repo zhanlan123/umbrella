@@ -5,15 +5,36 @@ import {controls} from "./gui.js";
 import {Noise} from './sound';
 import {COLORS} from "./colors";
 
-let settings = {};
+let settings = {
+    mask: []
+};
 
 const setSettings = options => {
-    settings = options;
-    if (settings.sound === "1") {
-        Noise.play();
-    } else {
-        Noise.stop();
+    if (options.sound !== settings.sound) {
+        if (settings.sound === "1") {
+            Noise.play();
+        } else {
+            Noise.stop();
+        }
     }
+
+    if (settings.mask !== options.mask) {
+        const mask = document.createElement('img');
+        mask.onload = function () {
+
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = mask.width;
+            canvas.height = mask.height;
+            context.drawImage(mask, 0, 0);
+            settings.mask = context.getImageData(0, 0, mask.width, mask.height).data;
+
+        };
+        mask.src = `masks/${options.mask}.gif`;
+
+    }
+
+    settings = Object.assign(settings, options);
 };
 
 const setAttributes = (element, attributes) => Object.entries(attributes)
@@ -104,28 +125,33 @@ function isInsideCircle(x1, y1, x2, y2, r) {
     return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < r
 }
 
-function rain(tick) {
+function rain() {
 
     const w = canvas.offsetWidth;
     canvas.style.height = w;
 
-    for (let y = 0; y < SIZE; y += (tick % 2) + 1) {
-        for (let x = 0; x < SIZE; x += (tick % 2) + 1) {
+    for (let y = 0; y < SIZE; y += 1) {
+        for (let x = 0; x < SIZE; x += 1) {
 
             const index = (y) * SIZE + x;
 
+            const alpha = settings.mask[index * 4] || 0;
+            // console.log(index*4 + 3);
+            // console.log(alpha);
+
             // Generate rain in the top of the image.
-            const isRain = y < 2;
+            // const isRain = y < 2;
 
             // Generate a flooded street in the bottom of the image.
-            const isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57);
+            // const isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57);
 
             // Mask out the silhouette of an umbrella in the middle of the image.
-            const isUmbrella = Math.random() > 0.8
-                && isInsideCircle(CENTER, CENTER, x, y, 32)
-                && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
+            // const isUmbrella = Math.random() > 0.8
+            //     && isInsideCircle(CENTER, CENTER, x, y, 32)
+            //     && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
 
-            if (isRain || isStreet || isUmbrella) {
+            const odds = 1 / 255 * (255 - alpha);
+            if (alpha && Math.random() > odds) {
                 levelBufferViewInt8[index] = 0;
             }
 
@@ -150,12 +176,12 @@ function moveDroplet(src) {
     // const horizontalMovement = Math.random() > 0.8
     //     ? src - rand + Math.floor((settings.wind * 8 - 3))
     //     : src;
-    const horizontalMovement = src + Math.floor(parseFloat(settings.horizontalMovementOffset) + Math.random()*parseFloat(settings.horizontalMovementMax));
+    const horizontalMovement = src + Math.floor(parseFloat(settings.horizontalMovementOffset) + Math.random() * parseFloat(settings.horizontalMovementMax));
 
 
     // Every 1 in 5 the rain will move up-wards and create the
     // street splash effect.
-    const verticalMovement = Math.floor(parseFloat(settings.verticalMovementOffset) + Math.random()*parseFloat(settings.verticalMovementMax));
+    const verticalMovement = Math.floor(parseFloat(settings.verticalMovementOffset) + Math.random() * parseFloat(settings.verticalMovementMax));
 
     levelBufferViewInt8[horizontalMovement + (SIZE * verticalMovement)] = nextLevel - (rand & 1);
 
@@ -170,7 +196,7 @@ function moveDroplet(src) {
 }
 
 function render() {
-    rain(tick++);
+    rain();
 
     // Go again!
     // setTimeout(function () {
@@ -179,9 +205,20 @@ function render() {
 }
 
 // Go!
+const mask = document.createElement('img');
+mask.onload = function () {
+
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    canvas.width = mask.width;
+    canvas.height = mask.height;
+    context.drawImage(mask, 0, 0);
+    settings.mask = context.getImageData(0, 0, mask.width, mask.height).data;
+
+};
+mask.src = 'masks/0.gif';
+
 render();
-
-
 
 
 // const wind = document.getElementById('wind');
