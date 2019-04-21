@@ -234,19 +234,33 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.controls = void 0;
 var controls = [{
-  id: 'wind',
+  id: 'horizontalMovementOffset',
   type: 'range',
-  min: 0,
-  max: 100,
-  step: 1,
-  value: 50
+  min: -2,
+  max: 2,
+  step: 0.1,
+  value: 0
 }, {
-  id: 'rain',
+  id: 'horizontalMovementMax',
   type: 'range',
   min: 0,
+  max: 10,
+  step: 1,
+  value: 1
+}, {
+  id: 'verticalMovementOffset',
+  type: 'range',
+  min: -100,
   max: 100,
   step: 1,
-  value: 50
+  value: -1
+}, {
+  id: 'verticalMovementMax',
+  type: 'range',
+  min: -100,
+  max: 100,
+  step: 1,
+  value: 5
 }, {
   id: 'sound',
   type: 'range',
@@ -263,278 +277,13 @@ var controls = [{
   value: 0
 }];
 exports.controls = controls;
-},{}],"index.js":[function(require,module,exports) {
+},{}],"sound.js":[function(require,module,exports) {
 "use strict";
 
-var _utils = require("./utils.js");
-
-var _gui = require("./gui.js");
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-var setAttributes = function setAttributes(element, attributes) {
-  return Object.entries(attributes).forEach(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
-        key = _ref2[0],
-        val = _ref2[1];
-
-    return element.setAttribute(key, val);
-  });
-};
-
-var elements = _gui.controls.map(function (control) {
-  var label = document.createElement('label');
-  var text = document.createTextNode(control.id);
-  var input = document.createElement('input');
-  setAttributes(input, control);
-  var val = document.createElement('span');
-  val.innerHTML = " (".concat(control.value, ")");
-  label.appendChild(text);
-  label.appendChild(val);
-  label.appendChild(input);
-  input.addEventListener('change', function (event) {
-    val.innerHTML = " (".concat(event.target.value, ")");
-    var options = Array.from(document.querySelectorAll('input')).map(function (_ref3) {
-      var id = _ref3.id,
-          value = _ref3.value;
-      return _defineProperty({}, id, value);
-    }).reduce(function (memo, item) {
-      return Object.assign(memo, item);
-    }, {});
-    location.hash = (0, _utils.serializeObject)(options);
-  });
-  return label;
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-
-var target = document.getElementById('controls');
-elements.forEach(function (element) {
-  return target.appendChild(element);
-}); // const search = window.location.search;
-
-var params = (0, _utils.getQueryStringObjectFromHash)();
-Object.keys(params).forEach(function (key) {
-  var input = document.getElementById(key);
-
-  if (input) {
-    input.value = params[key];
-  }
-});
-/*
-
-
-
-
-
-const svg = createNode("svg");
-document.getElementById('js-paper').appendChild(svg);
-
-window.addEventListener("hashchange", event => {
-  const options = getQueryStringObjectFromHash();
-  render({svg, ...options});
-  Object.keys(options).forEach(key => {
-    const input = document.getElementById(key);
-    if (input) {
-      input.value = options[key];
-    }
-  });
-});
-
-const options = Array.from(document.querySelectorAll('input'))
-    .map(({id, value}) => ({[id]: value}))
-    .reduce((memo, item) => Object.assign(memo, item), {});
-render({svg, ...options});
-
-
-const downloadButton = document.createElement('button');
-downloadButton.innerText = "Download SVG";
-downloadButton.addEventListener('click', event => {
-  const options = Array.from(document.querySelectorAll('input'))
-      .map(({id, value}) => ({[id]: value}))
-      .reduce((memo, item) => Object.assign(memo, item), {});
-  render({svg, ...options});
-  const values = Object.values(options).join('-');
-  downloadContent(`mandala-${values}.svg`, svg.outerHTML);
-});
-target.appendChild(downloadButton);
-
-function render(options) {
-
-  const {svg} = options;
-
-  const size = 540;
-  const table = parseInt(options.table);
-  const modulo = parseInt(options.modulo);
-  const rotation = parseInt(options.rotation);
-  const start = parseInt((options.start || 0) / 100 * modulo);
-  const end = parseInt((options.end || 100) / 100 * modulo);
-
-  const width = size;
-  const height = size;
-
-  emptyElement(svg);
-  svg.setAttribute("viewBox", `0, 0, ${size}, ${size}`);
-  svg.setAttribute('width', width);
-  svg.setAttribute('height', height);
-
-
-  // Create an array of circle coordinates.
-  const circle = new Array(modulo).fill(0).map((_, index) => index * (Math.PI * 2) / modulo).map(angle => {
-    const x = width / 2 * Math.cos(angle + (Math.PI / 180 * rotation)) + width / 2;
-    const y = height / 2 * Math.sin(angle + (Math.PI / 180 * rotation)) + height / 2;
-    return {x, y};
-  });
-
-  // Create the lines.
-  const lines = new Array(end - start).fill(0).map((_, index) => start + index).map(i => {
-    const p1 = parseInt(i % modulo, 10);
-    const p2 = parseInt((table * i) % modulo, 10);
-
-    const start = circle[p1];
-    const end = circle[p2];
-
-    const {x: x1, y: y1} = start;
-    const {x: x2, y: y2} = end;
-
-    if (options.center === "1") {
-      const w = Math.abs(x1 - x2);
-      const h = Math.abs(y1 - y2);
-
-      const x = x1 < x2 ? x1 : x2;
-      const y = y1 < y2 ? y1 : y2;
-      const diffx = size / 2 - x;
-      const diffy = size / 2 - y;
-
-      const res = {
-        x1: x1 + diffx - w / 2,
-        x2: x2 + diffx - w / 2,
-        y1: y1 + diffy - h / 2,
-        y2: y2 + diffy - h / 2
-      };
-
-      return res;
-    }
-
-    return {x1, y1, x2, y2};
-  });
-
-  const filteredLines = lines.filter((_, index) => {
-    return index % parseInt(options.keepEveryNLines) === parseInt(options.keepEveryNLinesShift);
-  });
-
-  const filteredLines2 = parseInt(options.minLength) === 0 ? filteredLines : filteredLines.filter(line => {
-    const a = line.x1 - line.x2;
-    const b = line.y1 - line.y2;
-    const length = Math.sqrt(a * a + b * b);
-    return length > options.minLength
-  });
-
-
-  // Append lines to svg element.
-  filteredLines2.forEach(coordinates => {
-    const line = createNode("line", {
-      strokeWidth: 0.4,
-      stroke: "#FFFFFF", ...coordinates
-    });
-    svg.appendChild(line);
-  });
-
-}
-
-* */
-
-var SIZE = 256;
-var CENTER = SIZE / 2;
-var selectedColorScheme = 0;
-var tick = 0;
-var mouse = {
-  x: 0.5,
-  y: 0.4
-}; // A gray-scale height-map.
-
-var COLORS = [[[255, 255, 255], [240, 240, 240], [217, 217, 217], [189, 189, 189], [150, 150, 150], [115, 115, 115], [82, 82, 82], [37, 37, 37], [0, 0, 0]], [[255, 255, 204], [255, 237, 160], [254, 217, 118], [254, 178, 76], [253, 141, 60], [252, 78, 42], [227, 26, 28], [189, 0, 38], [128, 0, 38]], [[255, 247, 251], [236, 231, 242], [208, 209, 230], [166, 189, 219], [116, 169, 207], [54, 144, 192], [5, 112, 176], [4, 90, 141], [2, 56, 88]]]; // Setup the canvas.
-
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
-canvas.width = SIZE;
-canvas.height = SIZE;
-var imageData = context.getImageData(0, 0, SIZE, SIZE); // One buffer to hold the color data for each pixel.
-
-var buffer = new ArrayBuffer(imageData.data.length);
-var bufferViewInt8 = new Uint8ClampedArray(buffer);
-var bufferViewInt32 = new Uint32Array(buffer); // One buffer to hold the height map level for each pixel.
-
-var levelBuffer = new ArrayBuffer(imageData.data.length);
-var levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer); // Check if a coordinate is inside a circle with center x1, y1 and radius r.
-
-function isInsideCircle(x1, y1, x2, y2, r) {
-  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < r;
-}
-
-function rain(tick) {
-  var w = canvas.offsetWidth;
-  canvas.style.height = w;
-
-  for (var y = 0; y < SIZE; y += tick % 2 + 1) {
-    for (var x = 0; x < SIZE; x += tick % 2 + 1) {
-      var index = y * SIZE + x; // Generate rain in the top of the image.
-
-      var isRain = y < 2; // Generate a flooded street in the bottom of the image.
-
-      var isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57); // Mask out the silhouette of an umbrella in the middle of the image.
-
-      var isUmbrella = Math.random() > 0.8 && isInsideCircle(CENTER, CENTER, x, y, 32) && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
-
-      if (isRain || isStreet || isUmbrella) {
-        levelBufferViewInt8[index] = 0;
-      } // Bring it to life.
-
-
-      moveDroplet(index);
-    }
-  } // Update the canvas with the new pixel values.
-
-
-  imageData.data.set(bufferViewInt8);
-  context.putImageData(imageData, 0, 0);
-}
-
-function moveDroplet(src) {
-  var nextLevel = levelBufferViewInt8[src] + Math.round(Math.random() * 1.3); // Generate a 0, 1 or 2.
-
-  var rand = Math.round(Math.random() * 2.0); // Add horizontal movement to create a wind effect.
-
-  var horizontalMovement = Math.random() > 0.8 ? src - rand + Math.floor(mouse.x * 8 - 3) : src; // Every 1 in 5 the rain will move up-wards and create the
-  // street splash effect.
-
-  var verticalMovement = Math.floor(Math.random() * (4 + Math.floor(mouse.y * 4))) * (Math.random() > 0.2 ? 1 : -1);
-  levelBufferViewInt8[horizontalMovement + SIZE * verticalMovement] = nextLevel - (rand & 1);
-  var nextColor = COLORS[selectedColorScheme][nextLevel] || 11; // Set the new pixel value.
-
-  bufferViewInt32[src - SIZE] = 255 << 24 | // Alpha
-  nextColor[2] << 16 | // Blue
-  nextColor[1] << 8 | // Green
-  nextColor[0]; // Red
-}
-
-function render() {
-  rain(tick++); // Go again!
-  // setTimeout(function () {
-
-  requestAnimationFrame(function () {
-    return render();
-  }); // }, 1000);
-} // Go!
-
-
-render();
+exports.Noise = void 0;
 
 var Noise = function () {
   var track = {};
@@ -592,41 +341,205 @@ var Noise = function () {
   };
 }();
 
-var handleMousemove = function handleMousemove(event) {
-  var target = event.target;
-  mouse.x = target.value / 100;
-};
+exports.Noise = Noise;
+},{}],"colors.js":[function(require,module,exports) {
+"use strict";
 
-var handleRainChange = function handleRainChange(event) {
-  var target = event.target;
-  mouse.y = target.value / 100;
-};
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.COLORS = void 0;
+// A gray-scale height-map.
+var COLORS = [[[255, 255, 255], [240, 240, 240], [217, 217, 217], [189, 189, 189], [150, 150, 150], [115, 115, 115], [82, 82, 82], [37, 37, 37], [0, 0, 0]], [[255, 255, 204], [255, 237, 160], [254, 217, 118], [254, 178, 76], [253, 141, 60], [252, 78, 42], [227, 26, 28], [189, 0, 38], [128, 0, 38]], [[255, 247, 251], [236, 231, 242], [208, 209, 230], [166, 189, 219], [116, 169, 207], [54, 144, 192], [5, 112, 176], [4, 90, 141], [2, 56, 88]]];
+exports.COLORS = COLORS;
+},{}],"index.js":[function(require,module,exports) {
+"use strict";
 
-var handleColorChange = function handleColorChange(event) {
-  var target = event.target;
-  selectedColorScheme = parseInt(target.value);
-  console.log(selectedColorScheme);
-};
+var _utils = require("./utils.js");
 
-var handleSoundChange = function handleSoundChange(event) {
-  var target = event.target;
+var _gui = require("./gui.js");
 
-  if (target.value === "1") {
-    Noise.play();
+var _sound = require("./sound");
+
+var _colors = require("./colors");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var settings = {};
+
+var setSettings = function setSettings(options) {
+  settings = options;
+
+  if (settings.sound === "1") {
+    _sound.Noise.play();
   } else {
-    Noise.stop();
+    _sound.Noise.stop();
   }
 };
 
-var wind = document.getElementById('wind');
-wind.addEventListener('input', handleMousemove);
-var rainRangeElement = document.getElementById('rain');
-rainRangeElement.addEventListener('input', handleRainChange);
-var soundRangeElement = document.getElementById('sound');
-soundRangeElement.addEventListener('input', handleSoundChange);
-var colorRangeElement = document.getElementById('color');
-colorRangeElement.addEventListener('input', handleColorChange);
-},{"./utils.js":"utils.js","./gui.js":"gui.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var setAttributes = function setAttributes(element, attributes) {
+  return Object.entries(attributes).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        key = _ref2[0],
+        val = _ref2[1];
+
+    return element.setAttribute(key, val);
+  });
+};
+
+var elements = _gui.controls.map(function (control) {
+  var label = document.createElement('label');
+  var text = document.createTextNode(control.id);
+  var input = document.createElement('input');
+  setAttributes(input, control);
+  var val = document.createElement('span');
+  val.innerHTML = " (".concat(control.value, ")");
+  label.appendChild(text);
+  label.appendChild(val);
+  label.appendChild(input);
+  input.addEventListener('change', function (event) {
+    val.innerHTML = " (".concat(event.target.value, ")");
+    var options = Array.from(document.querySelectorAll('input')).map(function (_ref3) {
+      var id = _ref3.id,
+          value = _ref3.value;
+      return _defineProperty({}, id, value);
+    }).reduce(function (memo, item) {
+      return Object.assign(memo, item);
+    }, {});
+    location.hash = (0, _utils.serializeObject)(options);
+  });
+  return label;
+});
+
+var target = document.getElementById('controls');
+elements.forEach(function (element) {
+  return target.appendChild(element);
+}); // const search = window.location.search;
+
+var params = (0, _utils.getQueryStringObjectFromHash)();
+Object.keys(params).forEach(function (key) {
+  var input = document.getElementById(key);
+
+  if (input) {
+    input.value = params[key];
+  }
+});
+window.addEventListener("hashchange", function (event) {
+  var options = (0, _utils.getQueryStringObjectFromHash)();
+  setSettings(options);
+  Object.keys(options).forEach(function (key) {
+    var input = document.getElementById(key);
+
+    if (input) {
+      input.value = options[key];
+    }
+  });
+});
+var options = Array.from(document.querySelectorAll('input')).map(function (_ref5) {
+  var id = _ref5.id,
+      value = _ref5.value;
+  return _defineProperty({}, id, value);
+}).reduce(function (memo, item) {
+  return Object.assign(memo, item);
+}, {});
+setSettings(options);
+var SIZE = 256;
+var CENTER = SIZE / 2;
+var tick = 0; // Setup the canvas.
+
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+canvas.width = SIZE;
+canvas.height = SIZE;
+var imageData = context.getImageData(0, 0, SIZE, SIZE); // One buffer to hold the color data for each pixel.
+
+var buffer = new ArrayBuffer(imageData.data.length);
+var bufferViewInt8 = new Uint8ClampedArray(buffer);
+var bufferViewInt32 = new Uint32Array(buffer); // One buffer to hold the height map level for each pixel.
+
+var levelBuffer = new ArrayBuffer(imageData.data.length);
+var levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer); // Check if a coordinate is inside a circle with center x1, y1 and radius r.
+
+function isInsideCircle(x1, y1, x2, y2, r) {
+  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < r;
+}
+
+function rain(tick) {
+  var w = canvas.offsetWidth;
+  canvas.style.height = w;
+
+  for (var y = 0; y < SIZE; y += tick % 2 + 1) {
+    for (var x = 0; x < SIZE; x += tick % 2 + 1) {
+      var index = y * SIZE + x; // Generate rain in the top of the image.
+
+      var isRain = y < 2; // Generate a flooded street in the bottom of the image.
+
+      var isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57); // Mask out the silhouette of an umbrella in the middle of the image.
+
+      var isUmbrella = Math.random() > 0.8 && isInsideCircle(CENTER, CENTER, x, y, 32) && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
+
+      if (isRain || isStreet || isUmbrella) {
+        levelBufferViewInt8[index] = 0;
+      } // Bring it to life.
+
+
+      moveDroplet(index);
+    }
+  } // Update the canvas with the new pixel values.
+
+
+  imageData.data.set(bufferViewInt8);
+  context.putImageData(imageData, 0, 0);
+}
+
+function moveDroplet(src) {
+  var nextLevel = levelBufferViewInt8[src] + Math.round(Math.random() * 1.3); // Generate a 0, 1 or 2.
+
+  var rand = Math.round(Math.random() * 2.0); // Add horizontal movement to create a wind effect.
+  // const horizontalMovement = Math.random() > 0.8
+  //     ? src - rand + Math.floor((settings.wind * 8 - 3))
+  //     : src;
+
+  var horizontalMovement = src + Math.floor(parseFloat(settings.horizontalMovementOffset) + Math.random() * parseFloat(settings.horizontalMovementMax)); // Every 1 in 5 the rain will move up-wards and create the
+  // street splash effect.
+
+  var verticalMovement = Math.floor(parseFloat(settings.verticalMovementOffset) + Math.random() * parseFloat(settings.verticalMovementMax));
+  levelBufferViewInt8[horizontalMovement + SIZE * verticalMovement] = nextLevel - (rand & 1);
+  var nextColor = _colors.COLORS[settings.color][nextLevel] || 11; // Set the new pixel value.
+
+  bufferViewInt32[src - SIZE] = 255 << 24 | // Alpha
+  nextColor[2] << 16 | // Blue
+  nextColor[1] << 8 | // Green
+  nextColor[0]; // Red
+}
+
+function render() {
+  rain(tick++); // Go again!
+  // setTimeout(function () {
+
+  requestAnimationFrame(function () {
+    return render();
+  }); // }, 100);
+} // Go!
+
+
+render(); // const wind = document.getElementById('wind');
+// wind.addEventListener('input', handleMousemove);
+// const rainRangeElement = document.getElementById('rain');
+// rainRangeElement.addEventListener('input', handleRainChange);
+// const soundRangeElement = document.getElementById('sound');
+// soundRangeElement.addEventListener('input', handleSoundChange);
+// const colorRangeElement = document.getElementById('color');
+// colorRangeElement.addEventListener('input', handleColorChange);
+},{"./utils.js":"utils.js","./gui.js":"gui.js","./sound":"sound.js","./colors":"colors.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -654,7 +567,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64598" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58380" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
