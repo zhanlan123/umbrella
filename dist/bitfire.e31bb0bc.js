@@ -431,7 +431,7 @@ var elements = _gui.controls.map(function (control) {
   label.appendChild(text);
   label.appendChild(val);
   label.appendChild(input);
-  input.addEventListener('change', function (event) {
+  input.addEventListener('input', function (event) {
     val.innerHTML = " (".concat(event.target.value, ")");
     var options = Array.from(document.querySelectorAll('input')).map(function (_ref3) {
       var id = _ref3.id,
@@ -611,7 +611,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60401" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60765" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
