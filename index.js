@@ -49,6 +49,7 @@ const elements = controls.map(control => {
     setAttributes(input, control);
 
     const val = document.createElement('span');
+    val.id = `label-${control.id}`;
     val.innerHTML = ` (${control.value})`;
 
     label.appendChild(text);
@@ -85,6 +86,8 @@ window.addEventListener("hashchange", event => {
         const input = document.getElementById(key);
         if (input) {
             input.value = options[key];
+            const labelId = `label-${key}`;
+            document.getElementById(labelId).innerHTML = ` (${options[key]})`;
         }
     });
 });
@@ -95,12 +98,7 @@ const options = Array.from(document.querySelectorAll('input'))
 
 setSettings(options);
 
-
 const SIZE = 256;
-const CENTER = SIZE / 2;
-
-let tick = 0;
-
 
 // Setup the canvas.
 const canvas = document.getElementById('canvas');
@@ -134,28 +132,13 @@ function rain() {
         for (let x = 0; x < SIZE; x += 1) {
 
             const index = (y) * SIZE + x;
-
             const alpha = settings.mask[index * 4] || 0;
-            // console.log(index*4 + 3);
-            // console.log(alpha);
-
-            // Generate rain in the top of the image.
-            // const isRain = y < 2;
-
-            // Generate a flooded street in the bottom of the image.
-            // const isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57);
-
-            // Mask out the silhouette of an umbrella in the middle of the image.
-            // const isUmbrella = Math.random() > 0.8
-            //     && isInsideCircle(CENTER, CENTER, x, y, 32)
-            //     && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
 
             const odds = 1 / 255 * (255 - alpha);
             if (alpha && Math.random() > odds) {
                 levelBufferViewInt8[index] = 0;
             }
 
-            // Bring it to life.
             moveDroplet(index);
         }
     }
@@ -216,20 +199,6 @@ mask.onload = function () {
     settings.mask = context.getImageData(0, 0, mask.width, mask.height).data;
 
 };
-mask.src = 'masks/0.gif';
+mask.src = `masks/${options.mask}.gif`;
 
 render();
-
-
-// const wind = document.getElementById('wind');
-// wind.addEventListener('input', handleMousemove);
-
-// const rainRangeElement = document.getElementById('rain');
-// rainRangeElement.addEventListener('input', handleRainChange);
-
-
-// const soundRangeElement = document.getElementById('sound');
-// soundRangeElement.addEventListener('input', handleSoundChange);
-
-// const colorRangeElement = document.getElementById('color');
-// colorRangeElement.addEventListener('input', handleColorChange);

@@ -427,6 +427,7 @@ var elements = _gui.controls.map(function (control) {
   var input = document.createElement('input');
   setAttributes(input, control);
   var val = document.createElement('span');
+  val.id = "label-".concat(control.id);
   val.innerHTML = " (".concat(control.value, ")");
   label.appendChild(text);
   label.appendChild(val);
@@ -466,6 +467,8 @@ window.addEventListener("hashchange", function (event) {
 
     if (input) {
       input.value = options[key];
+      var labelId = "label-".concat(key);
+      document.getElementById(labelId).innerHTML = " (".concat(options[key], ")");
     }
   });
 });
@@ -477,9 +480,7 @@ var options = Array.from(document.querySelectorAll('input')).map(function (_ref5
   return Object.assign(memo, item);
 }, {});
 setSettings(options);
-var SIZE = 256;
-var CENTER = SIZE / 2;
-var tick = 0; // Setup the canvas.
+var SIZE = 256; // Setup the canvas.
 
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
@@ -505,23 +506,12 @@ function rain() {
   for (var y = 0; y < SIZE; y += 1) {
     for (var x = 0; x < SIZE; x += 1) {
       var index = y * SIZE + x;
-      var alpha = settings.mask[index * 4] || 0; // console.log(index*4 + 3);
-      // console.log(alpha);
-      // Generate rain in the top of the image.
-      // const isRain = y < 2;
-      // Generate a flooded street in the bottom of the image.
-      // const isStreet = y > Math.round(CENTER * 1.53) && y < Math.round(CENTER * 1.57);
-      // Mask out the silhouette of an umbrella in the middle of the image.
-      // const isUmbrella = Math.random() > 0.8
-      //     && isInsideCircle(CENTER, CENTER, x, y, 32)
-      //     && !isInsideCircle(CENTER, CENTER - 10, x - 1, y, 40);
-
+      var alpha = settings.mask[index * 4] || 0;
       var odds = 1 / 255 * (255 - alpha);
 
       if (alpha && Math.random() > odds) {
         levelBufferViewInt8[index] = 0;
-      } // Bring it to life.
-
+      }
 
       moveDroplet(index);
     }
@@ -574,15 +564,8 @@ mask.onload = function () {
   settings.mask = context.getImageData(0, 0, mask.width, mask.height).data;
 };
 
-mask.src = 'masks/0.gif';
-render(); // const wind = document.getElementById('wind');
-// wind.addEventListener('input', handleMousemove);
-// const rainRangeElement = document.getElementById('rain');
-// rainRangeElement.addEventListener('input', handleRainChange);
-// const soundRangeElement = document.getElementById('sound');
-// soundRangeElement.addEventListener('input', handleSoundChange);
-// const colorRangeElement = document.getElementById('color');
-// colorRangeElement.addEventListener('input', handleColorChange);
+mask.src = "masks/".concat(options.mask, ".gif");
+render();
 },{"./utils.js":"utils.js","./gui.js":"gui.js","./sound":"sound.js","./colors":"colors.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -611,7 +594,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60765" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51169" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
