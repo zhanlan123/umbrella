@@ -237,7 +237,7 @@ var controls = [{
   id: 'mask',
   type: 'range',
   min: 0,
-  max: 3,
+  max: 5,
   step: 1,
   value: 0
 }, {
@@ -279,7 +279,7 @@ var controls = [{
   id: 'color',
   type: 'range',
   min: 0,
-  max: 2,
+  max: 3,
   step: 1,
   value: 0
 }];
@@ -357,7 +357,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.COLORS = void 0;
 // A gray-scale height-map.
-var COLORS = [[[255, 255, 255], [240, 240, 240], [217, 217, 217], [189, 189, 189], [150, 150, 150], [115, 115, 115], [82, 82, 82], [37, 37, 37], [0, 0, 0]], [[255, 255, 204], [255, 237, 160], [254, 217, 118], [254, 178, 76], [253, 141, 60], [252, 78, 42], [227, 26, 28], [189, 0, 38], [128, 0, 38]], [[255, 247, 251], [236, 231, 242], [208, 209, 230], [166, 189, 219], [116, 169, 207], [54, 144, 192], [5, 112, 176], [4, 90, 141], [2, 56, 88]]];
+var COLORS = [[[255, 255, 255], [240, 240, 240], [217, 217, 217], [189, 189, 189], [150, 150, 150], [115, 115, 115], [82, 82, 82], [37, 37, 37], [0, 0, 0]], [[255, 255, 204], [255, 237, 160], [254, 217, 118], [254, 178, 76], [253, 141, 60], [252, 78, 42], [227, 26, 28], [189, 0, 38], [128, 0, 38]], [[255, 247, 251], [236, 231, 242], [208, 209, 230], [166, 189, 219], [116, 169, 207], [54, 144, 192], [5, 112, 176], [4, 90, 141], [2, 56, 88]], [[247, 252, 245], [229, 245, 224], [199, 233, 192], [161, 217, 155], [116, 196, 118], [65, 171, 93], [35, 139, 69], [0, 109, 44], [0, 68, 27]]];
 exports.COLORS = COLORS;
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
@@ -493,11 +493,9 @@ var bufferViewInt8 = new Uint8ClampedArray(buffer);
 var bufferViewInt32 = new Uint32Array(buffer); // One buffer to hold the height map level for each pixel.
 
 var levelBuffer = new ArrayBuffer(imageData.data.length);
-var levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer); // Check if a coordinate is inside a circle with center x1, y1 and radius r.
-
-function isInsideCircle(x1, y1, x2, y2, r) {
-  return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < r;
-}
+var levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer).map(function (x) {
+  return Number.MAX_SAFE_INTEGER;
+});
 
 function rain() {
   var w = canvas.offsetWidth;
@@ -545,11 +543,10 @@ function moveDroplet(src) {
 
 function render() {
   rain(); // Go again!
-  // setTimeout(function () {
 
   requestAnimationFrame(function () {
     return render();
-  }); // }, 100);
+  });
 } // Go!
 
 
@@ -594,7 +591,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51169" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63474" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

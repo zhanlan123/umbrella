@@ -116,12 +116,7 @@ const bufferViewInt32 = new Uint32Array(buffer);
 
 // One buffer to hold the height map level for each pixel.
 const levelBuffer = new ArrayBuffer(imageData.data.length);
-const levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer);
-
-// Check if a coordinate is inside a circle with center x1, y1 and radius r.
-function isInsideCircle(x1, y1, x2, y2, r) {
-    return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < r
-}
+const levelBufferViewInt8 = new Uint8ClampedArray(levelBuffer).map(x => Number.MAX_SAFE_INTEGER);
 
 function rain() {
 
@@ -182,9 +177,7 @@ function render() {
     rain();
 
     // Go again!
-    // setTimeout(function () {
     requestAnimationFrame(() => render());
-    // }, 100);
 }
 
 // Go!

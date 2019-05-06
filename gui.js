@@ -2,7 +2,7 @@ export const controls = [{
     id: 'mask',
     type: 'range',
     min: 0,
-    max: 3,
+    max: 5,
     step: 1,
     value: 0
 }, {
@@ -44,7 +44,7 @@ export const controls = [{
     id: 'color',
     type: 'range',
     min: 0,
-    max: 2,
+    max: 3,
     step: 1,
     value: 0
 }];
